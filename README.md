@@ -1,4 +1,4 @@
-# README: Tomato Quality Segmentation – Background Bias Analysis
+# README: Evaluating Background Bias and Improving Model Reliability in Tomato Quality Classification Using Deep Learning and Explainable AI
 
 ## Project Overview
 
@@ -181,12 +181,25 @@ The notebook generates:
 
 ## Execution Environment
 
-> **Note:** This project was developed and executed in a Kaggle environment. The directory structure, default `INPUT_DIR` path, and GPU configuration assume a Kaggle Notebook runtime. If you are running the project locally or on another platform, make sure to adjust dataset paths, hardware settings, and environment configurations accordingly.
+> **Note:** This project was developed and executed in a [Kaggle environment](https://www.kaggle.com/code/sharifbek/tomato-segmentation-final). The directory structure, default `INPUT_DIR` path, and GPU configuration assume a Kaggle Notebook runtime. If you are running the project locally or on another platform, make sure to adjust dataset paths, hardware settings, and environment configurations accordingly.
 
 ## Academic Context
 
 This project was implemented as part of a Master's thesis research project. The experimental design, methodology, and analysis were developed to systematically investigate background bias in tomato quality classification using semantic segmentation models.
 
-## Getting Help
+### Getting Help
 
 ### _Check the notebook's comments and markdown cells for detailed explanations of each step._
+
+---
+
+<div align="center">
+
+[![Kaggle](https://img.shields.io/badge/Kaggle-Notebook-20BEFF?style=for-the-badge&logo=kaggle)](https://www.kaggle.com/code/sharifbek/tomato-segmentation-final)
+[![GitHub](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github)](https://github.com/mustafozoda/Thesis)
+
+---
+
+_Created as part of research on Explainable AI in Agricultural Computer Vision_
+
+</div>
