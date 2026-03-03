@@ -202,8 +202,4 @@ This project was implemented as part of a Master's thesis research project. The 
 [![Kaggle](https://img.shields.io/badge/Kaggle-Notebook-20BEFF?style=for-the-badge&logo=kaggle)](https://www.kaggle.com/code/sharifbek/tomato-segmentation-final)
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github)](https://github.com/mustafozoda/Thesis)
 
----
-
-_Created as part of research on Explainable AI in Agricultural Computer Vision_
-
 </div>
