@@ -1,0 +1,11 @@
+Step,Encoder,Train BG,Test BG,Pixel Acc,Mean IoU,Mean Dice,ECE
+Step 1: Natural BG,MobileNetV2,Natural,Natural,0.8604,0.4080,0.5544,0.0873
+Step 1: Natural BG,EfficientNet-B0,Natural,Natural,0.8492,0.4064,0.5534,0.0693
+Step 2: BG Removed,MobileNetV2,Removed,Removed,0.8969,0.4363,0.5753,0.0540
+Step 2: BG Removed,EfficientNet-B0,Removed,Removed,0.8900,0.4214,0.5604,0.0398
+Step 3: Synthetic BG,MobileNetV2,Synthetic,Synthetic,0.8946,0.4321,0.5730,0.0391
+Step 3: Synthetic BG,EfficientNet-B0,Synthetic,Synthetic,0.8940,0.4381,0.5786,0.0385
+Cross-BG: Natural→Synth,MobileNetV2,Natural,Synth,0.7401,0.3213,0.4551,0.1671
+Cross-BG: Natural→Synth,EfficientNet-B0,Natural,Synth,0.6326,0.2012,0.3009,0.2172
+Cross-BG: Synth→Natural,MobileNetV2,Synth,Natural,0.1883,0.1618,0.2703,0.5965
+Cross-BG: Synth→Natural,EfficientNet-B0,Synth,Natural,0.2586,0.2033,0.3289,0.5219
