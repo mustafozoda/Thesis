@@ -1,4 +1,8 @@
-# README: Evaluating Background Bias and Improving Model Reliability in Tomato Quality Classification Using Deep Learning and Explainable AI
+<div align="center">
+
+# Evaluating Background Bias and Improving Model Reliability in Tomato Quality Classification Using Deep Learning and Explainable AI
+
+</div>
 
 ## Project Overview
 
