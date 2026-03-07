@@ -1,5 +1,2 @@
-# Dataset folder
-old-versions/dataset/
-
-# Dataset archive
-old-versions/runs.zip
+old_versions/dataset/
+old_versions/runs.zip
