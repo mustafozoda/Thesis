@@ -1,0 +1,15 @@
+{
+  "dataset_name": "tomato",
+  "data_root": "/kaggle/input/tomato/cropped",
+  "out_dir": "/kaggle/working/runs/baseline_mobilenetv2",
+  "model_name": "mobilenet_v2",
+  "image_size": 224,
+  "batch_size": 32,
+  "epochs": 30,
+  "lr": 0.0003,
+  "weight_decay": 0.0001,
+  "num_workers": 2,
+  "seed": 42,
+  "amp": true,
+  "device": "cuda"
+}

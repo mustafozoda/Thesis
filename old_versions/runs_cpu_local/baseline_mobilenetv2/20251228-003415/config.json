@@ -1,0 +1,14 @@
+{
+  "data_root": "c:\\Users\\User\\Desktop\\LaboroTomato\\dataset\\cropped",
+  "out_dir": "../runs_cpu_local/baseline_mobilenetv2",
+  "model_name": "mobilenet_v2",
+  "image_size": 224,
+  "batch_size": 32,
+  "epochs": 30,
+  "lr": 0.0003,
+  "weight_decay": 0.0001,
+  "num_workers": 4,
+  "seed": 42,
+  "amp": true,
+  "device": "cpu"
+}

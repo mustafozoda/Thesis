@@ -1,0 +1,143 @@
+{
+  "summary": {
+    "n": 2823,
+    "accuracy": 0.8136733770370483,
+    "ece": 0.13768670690258134,
+    "n_bins": 15,
+    "confidence_correct_mean": 0.9646598696708679,
+    "confidence_wrong_mean": 0.8896306753158569,
+    "confidence_correct_median": 0.9999916553497314,
+    "confidence_wrong_median": 0.9875473976135254,
+    "confidence_wrong_p90": 0.9999992847442627
+  },
+  "class_names": [
+    "fully_ripened",
+    "green",
+    "half_ripened"
+  ],
+  "bin_stats": [
+    {
+      "bin": 0,
+      "count": 0,
+      "conf_avg": NaN,
+      "acc_avg": NaN,
+      "bin_low": 0.0,
+      "bin_high": 0.06666666666666667
+    },
+    {
+      "bin": 1,
+      "count": 0,
+      "conf_avg": NaN,
+      "acc_avg": NaN,
+      "bin_low": 0.06666666666666667,
+      "bin_high": 0.13333333333333333
+    },
+    {
+      "bin": 2,
+      "count": 0,
+      "conf_avg": NaN,
+      "acc_avg": NaN,
+      "bin_low": 0.13333333333333333,
+      "bin_high": 0.2
+    },
+    {
+      "bin": 3,
+      "count": 0,
+      "conf_avg": NaN,
+      "acc_avg": NaN,
+      "bin_low": 0.2,
+      "bin_high": 0.26666666666666666
+    },
+    {
+      "bin": 4,
+      "count": 0,
+      "conf_avg": NaN,
+      "acc_avg": NaN,
+      "bin_low": 0.26666666666666666,
+      "bin_high": 0.3333333333333333
+    },
+    {
+      "bin": 5,
+      "count": 2,
+      "conf_avg": 0.3601383566856384,
+      "acc_avg": 0.5,
+      "bin_low": 0.3333333333333333,
+      "bin_high": 0.4
+    },
+    {
+      "bin": 6,
+      "count": 10,
+      "conf_avg": 0.4314712584018707,
+      "acc_avg": 0.30000001192092896,
+      "bin_low": 0.4,
+      "bin_high": 0.4666666666666667
+    },
+    {
+      "bin": 7,
+      "count": 24,
+      "conf_avg": 0.5133131742477417,
+      "acc_avg": 0.5416666865348816,
+      "bin_low": 0.4666666666666667,
+      "bin_high": 0.5333333333333333
+    },
+    {
+      "bin": 8,
+      "count": 60,
+      "conf_avg": 0.5684369802474976,
+      "acc_avg": 0.5166666507720947,
+      "bin_low": 0.5333333333333333,
+      "bin_high": 0.6
+    },
+    {
+      "bin": 9,
+      "count": 59,
+      "conf_avg": 0.6377426981925964,
+      "acc_avg": 0.6271186470985413,
+      "bin_low": 0.6,
+      "bin_high": 0.6666666666666666
+    },
+    {
+      "bin": 10,
+      "count": 57,
+      "conf_avg": 0.7001224756240845,
+      "acc_avg": 0.5789473652839661,
+      "bin_low": 0.6666666666666666,
+      "bin_high": 0.7333333333333333
+    },
+    {
+      "bin": 11,
+      "count": 78,
+      "conf_avg": 0.7681199908256531,
+      "acc_avg": 0.6153846383094788,
+      "bin_low": 0.7333333333333333,
+      "bin_high": 0.8
+    },
+    {
+      "bin": 12,
+      "count": 92,
+      "conf_avg": 0.8306599259376526,
+      "acc_avg": 0.5760869383811951,
+      "bin_low": 0.8,
+      "bin_high": 0.8666666666666667
+    },
+    {
+      "bin": 13,
+      "count": 116,
+      "conf_avg": 0.9051249027252197,
+      "acc_avg": 0.6379310488700867,
+      "bin_low": 0.8666666666666667,
+      "bin_high": 0.9333333333333333
+    },
+    {
+      "bin": 14,
+      "count": 2325,
+      "conf_avg": 0.9950305819511414,
+      "acc_avg": 0.8619354963302612,
+      "bin_low": 0.9333333333333333,
+      "bin_high": 1.0
+    }
+  ],
+  "checkpoint": "C:\\Users\\User\\Desktop\\LaboroTomato\\runs\\baseline_mobilenetv2\\20251227-182453\\model_best.pt",
+  "data_root": "C:\\Users\\User\\Desktop\\LaboroTomato\\dataset\\cropped",
+  "split": "test"
+}
