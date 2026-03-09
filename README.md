@@ -153,7 +153,7 @@ python tomato-segmentation-final.py
 
 ## Expected Execution Time
 
-- Full training (all steps) on a GPU: approximately 6-8 hours
+- Full training (all steps) on a GPU: approximately 8-10 hours
 
 - CPU-only execution: significantly longer (12+ hours recommended for testing only)
 
