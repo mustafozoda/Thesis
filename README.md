@@ -56,7 +56,6 @@ THESIS/
 ├── old-versions-v3/            ← Intermediate version (deprecated)
 ├── .gitignore
 ├── README.md
-├── report notebook.docx        ← Exported notebook report
 └── requirements.txt
 ```
 
