@@ -1,3 +1,14 @@
-old_versions/dataset/
-old_versions/runs.zip
+old-versions/dataset/
+old-versions/runs.zip
+old-versions/runs/
+old-versions/runs_cpu_local/
+old-versions-v3/outputs/
+old-versions-v3/step-1-outputs/
+old-versions-v3/step-2-outputs/
+old-versions-v3/step-3-outputs/
 docs/
+tomato-seg-latest-sep/data
+tomato-seg-latest-sep/outputs/
+tomato-seg-latest-sep/config.py
+tomato-seg-latest/outputs/
+tomato-seg-latest/images/
