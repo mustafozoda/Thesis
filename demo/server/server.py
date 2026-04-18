@@ -1,15 +1,17 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-import torch
-import numpy as np
-import cv2
+from fastapi import FastAPI, File, UploadFile, HTTPException, Query  # type: ignore
+from fastapi.responses import JSONResponse  # type: ignore
+from fastapi.middleware.cors import CORSMiddleware  # type: ignore
+import torch  # type: ignore
+import numpy as np  # type: ignore
+import cv2  # type: ignore
 import io
 import base64
-from PIL import Image
-import segmentation_models_pytorch as smp
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
+import time
+from PIL import Image  # type: ignore
+import segmentation_models_pytorch as smp  # type: ignore
+import albumentations as A  # type: ignore
+from albumentations.pytorch import ToTensorV2  # type: ignore
+from typing import List, Optional
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 IMG_SIZE = 512
@@ -43,6 +45,67 @@ def colorize(mask):
     return out
 
 
+def crop_center_square(img_np):
+    img_h, img_w = img_np.shape[:2]
+    if img_h != img_w:
+        if img_h > img_w:
+            start = (img_h - img_w) // 2
+            img_np = img_np[start:start + img_w, :, :]
+        else:
+            start = (img_w - img_h) // 2
+            img_np = img_np[:, start:start + img_h, :]
+    return img_np
+
+
+def preprocess_image(img_np):
+    t = A.Compose([
+        A.Resize(IMG_SIZE, IMG_SIZE),
+        A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+        ToTensorV2()
+    ])
+    return t(image=img_np)['image'].unsqueeze(0).to(DEVICE)
+
+
+def run_inference(model, img_np):
+    tensor = preprocess_image(img_np)
+    with torch.no_grad():
+        logits = model(tensor)
+        probs = torch.softmax(logits, dim=1)
+        mask = probs.argmax(dim=1).squeeze(0).cpu().numpy()
+        prob_np = probs.squeeze(0).cpu().numpy()
+    return mask, prob_np
+
+
+def build_response(img_np, mask, prob_np):
+    colored = colorize(mask)
+    h, w = img_np.shape[:2]
+    img_r = cv2.resize(img_np, (w, h))
+    mask_colored_r = cv2.resize(
+        colored, (w, h), interpolation=cv2.INTER_NEAREST)
+    blended = cv2.addWeighted(
+        cv2.cvtColor(img_r, cv2.COLOR_RGB2BGR), 0.45,
+        cv2.cvtColor(mask_colored_r, cv2.COLOR_RGB2BGR), 0.55, 0
+    )
+    _, buf = cv2.imencode('.jpg', blended, [cv2.IMWRITE_JPEG_QUALITY, 85])
+    b64 = base64.b64encode(buf).decode()
+
+    total = mask.size
+    coverage = {CLASS_NAMES[c]: round(float((mask == c).sum() / total * 100), 1)
+                for c in range(len(CLASS_NAMES))}
+
+    # Per-class mean confidence (only over pixels predicted as that class)
+    confidence = {}
+    for c in range(len(CLASS_NAMES)):
+        pixel_mask = (mask == c)
+        if pixel_mask.sum() > 0:
+            mean_conf = float(prob_np[c][pixel_mask].mean())
+        else:
+            mean_conf = 0.0
+        confidence[CLASS_NAMES[c]] = round(mean_conf * 100, 1)
+
+    return {"overlay_b64": b64, "coverage": coverage, "confidence": confidence}
+
+
 print("Loading models...")
 models = {}
 for name, (enc, path) in MODEL_CONFIGS.items():
@@ -52,9 +115,24 @@ for name, (enc, path) in MODEL_CONFIGS.items():
     except FileNotFoundError:
         print(f"  ⚠️  Not found: {path}")
 
-app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"],
-                   allow_methods=["*"], allow_headers=["*"])
+app = FastAPI(title="Tomato Segmentation API", version="2.0.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "ok",
+        "device": str(DEVICE),
+        "models_loaded": list(models.keys()),
+        "models_count": len(models),
+        "timestamp": time.time()
+    }
 
 
 @app.get("/models")
@@ -69,46 +147,41 @@ async def segment(model_name: str, file: UploadFile = File(...)):
 
     img = Image.open(io.BytesIO(await file.read())).convert('RGB')
     img_np = np.array(img)
-    # img_np = cv2.flip(img_np, 0)
+    img_np = crop_center_square(img_np)
 
-    # Crop center square from the full photo
-    img_h, img_w = img_np.shape[:2]
-    if img_h != img_w:
-        if img_h > img_w:
-            # portrait — crop top and bottom
-            start = (img_h - img_w) // 2
-            img_np = img_np[start:start + img_w, :, :]
-        else:
-            # landscape — crop left and right
-            start = (img_w - img_h) // 2
-            img_np = img_np[:, start:start + img_h, :]
+    t0 = time.time()
+    mask, prob_np = run_inference(models[model_name], img_np)
+    inference_ms = round((time.time() - t0) * 1000, 1)
 
-    t = A.Compose([A.Resize(IMG_SIZE, IMG_SIZE),
-                   A.Normalize(mean=(0.485, 0.456, 0.406),
-                               std=(0.229, 0.224, 0.225)),
-                   ToTensorV2()])
-    tensor = t(image=img_np)['image'].unsqueeze(0).to(DEVICE)
+    result = build_response(img_np, mask, prob_np)
+    result["inference_ms"] = inference_ms
 
-    with torch.no_grad():
-        mask = models[model_name](tensor).argmax(
-            dim=1).squeeze(0).cpu().numpy()
+    return JSONResponse(result)
 
-    colored = colorize(mask)
-    h, w = img_np.shape[:2]
-    img_r = cv2.resize(img_np, (w, h))
-    mask_colored_r = cv2.resize(colored, (w, h))
-    blended = cv2.addWeighted(cv2.cvtColor(img_r, cv2.COLOR_RGB2BGR), 0.45,
-                              cv2.cvtColor(mask_colored_r, cv2.COLOR_RGB2BGR), 0.55, 0)
 
-    _, buf = cv2.imencode('.jpg', blended, [cv2.IMWRITE_JPEG_QUALITY, 85])
-    b64 = base64.b64encode(buf).decode()
+@app.post("/segment/batch")
+async def segment_batch(
+    model_name: str,
+    files: List[UploadFile] = File(...)
+):
+    if model_name not in models:
+        raise HTTPException(404, f"Model not found: {model_name}")
+    if len(files) > 10:
+        raise HTTPException(400, "Maximum 10 images per batch")
 
-    total = mask.size
-    coverage = {CLASS_NAMES[c]: round(float((mask == c).sum()/total*100), 1)
-                for c in range(len(CLASS_NAMES))}
+    results = []
+    for file in files:
+        img = Image.open(io.BytesIO(await file.read())).convert('RGB')
+        img_np = np.array(img)
+        img_np = crop_center_square(img_np)
+        mask, prob_np = run_inference(models[model_name], img_np)
+        result = build_response(img_np, mask, prob_np)
+        result["filename"] = file.filename
+        results.append(result)
 
-    return JSONResponse({"overlay_b64": b64, "coverage": coverage})
+    return JSONResponse({"results": results, "count": len(results)})
+
 
 if __name__ == "__main__":
-    import uvicorn
+    import uvicorn  # type: ignore
     uvicorn.run(app, host="0.0.0.0", port=8000)

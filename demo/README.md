@@ -1,6 +1,6 @@
-# TomatoSeg — Tomato Quality Segmentation App
+# TomatoSeg v2.0 — Tomato Quality Segmentation App
 
-A thesis demo application for real-time tomato quality segmentation using deep learning. The system consists of a Python FastAPI server running U-Net segmentation models and a React Native mobile app for live camera analysis.
+A thesis demo application for real-time tomato quality segmentation using deep learning. The system consists of a Python FastAPI server running U-Net segmentation models and a React Native mobile app for live camera analysis, photo capture, and gallery upload.
 
 ---
 
@@ -13,11 +13,11 @@ This app was built as part of a thesis on **background bias analysis in semantic
 | Class             | Description                    |
 | ----------------- | ------------------------------ |
 | `background`      | Non-tomato pixels              |
-| `b_fully_ripened` | Big tomato — fully ripe        |
-| `b_half_ripened`  | Big tomato — half ripe         |
+| `b_fully_ripened` | Big tomato — fully ripened     |
+| `b_half_ripened`  | Big tomato — half ripened      |
 | `b_green`         | Big tomato — green (unripe)    |
-| `l_fully_ripened` | Little tomato — fully ripe     |
-| `l_half_ripened`  | Little tomato — half ripe      |
+| `l_fully_ripened` | Little tomato — fully ripened  |
+| `l_half_ripened`  | Little tomato — half ripened   |
 | `l_green`         | Little tomato — green (unripe) |
 
 ### Models
@@ -38,7 +38,7 @@ This app was built as part of a thesis on **background bias analysis in semantic
 ```
 demo/
 ├── server/
-│   ├── server.py
+│   ├── main.py
 │   ├── requirements.txt
 │   └── models/
 │       ├── step1_mobilenetv2_natural_best.pth
@@ -49,30 +49,69 @@ demo/
 │       └── step3_efficientnetb0_synthetic_best.pth
 │
 └── client/
-   ├── App.js
-   ├── index.js
-   ├── package.json
-   ├── app.json
-   ├── context/
-   │   └── ThemeContext.js
-   ├── screens/
-   │   ├── MenuScreen.js
-   │   └── CameraScreen.js
-   └── components/
-      └── CoverageBars.js
+    ├── App.js
+    ├── index.js
+    ├── package.json
+    ├── app.json
+    ├── context/
+    │   ├── ThemeContext.js
+    │   └── ScanHistoryContext.js
+    ├── components/
+    │   ├── CoverageBars.js
+    │   ├── ServerContext.js
+    │   └── ExportCard.js
+    └── screens/
+        ├── OnboardingScreen.js
+        ├── MenuScreen.js
+        ├── CameraScreen.js
+        ├── HistoryScreen.js
+        ├── SplashScreen.js
+        └── SettingsScreen.js
 ```
 
 ---
 
 ## Features
 
+### Analysis Modes
+
 - **Live mode** — continuous inference every 1.5 seconds over the camera feed
 - **Photo mode** — capture a photo and analyse it on demand
 - **Upload mode** — pick an image from the phone gallery and analyse it
-- **Overlay toggle** — switch between original and segmented view
-- **Dark / Light theme** — toggle between dark and light UI from the menu
-- **Ripeness coverage bars** — shows fully ripened / half ripened / green as % of tomato pixels only
-- **Model selector** — choose between 6 trained models (3 steps × 2 encoders)
+
+### UI & UX
+
+- **Splash screen** — animated logo on app launch
+- **Onboarding** — 4-slide intro shown once on first launch explaining the app
+- **Dark / Light theme** — toggle from the menu header, persisted across sessions
+- **Animated scan line** — sweeps across viewport in live mode
+- **Smooth overlay fade** — segmentation overlay fades in when result arrives
+- **Class legend** — tap ⬡ to show all 7 class colors on the viewport
+- **Inference time badge** — shows server inference time on still image results
+
+### Results & Coverage
+
+- **Ripeness coverage bars** — animated bars showing fully ripened / half ripened / green as % of tomato pixels
+- **Confidence scores** — per-class model confidence shown alongside coverage
+- **Dominant ripeness badge** — highlights the most prevalent ripeness group
+
+### History & Export
+
+- **Scan history** — every photo/upload scan is automatically saved with thumbnail, coverage, model, and timestamp
+- **History screen** — browse past scans, tap for detail view, long press to delete, clear all option
+- **Export card** — generates a summary card image (overlay + stats) and shares via Android share sheet
+
+### Settings
+
+- **Configurable server URL** — change and test server connection from the Settings screen
+- **Persistent server URL** — saved across app restarts via AsyncStorage
+- **Connection test** — verify server is reachable before scanning
+
+### Model Selection
+
+- Choose between 6 trained models (3 steps × 2 encoders)
+- Info bar shows mIoU for the selected model
+- Step badge (S1/S2/S3) color coded throughout the app
 
 ---
 
@@ -90,7 +129,7 @@ pip install -r requirements.txt
 Start the server:
 
 ```bash
-python server.py
+python main.py
 ```
 
 You should see:
@@ -115,6 +154,8 @@ ifconfig        # Mac / Linux
 
 Look for the WiFi adapter or hotspot IP (e.g. `192.168.137.1`).
 
+---
+
 ### 2. Client Setup
 
 ```bash
@@ -122,109 +163,101 @@ cd demo/client
 npm install
 ```
 
-Update the server IP in `screens/MenuScreen.js`:
+#### Option A — Development build (recommended)
 
-```javascript
-const SERVER = "http://YOUR_LAPTOP_IP:8000";
-```
-
-Start the Expo development server:
+Connect your Android phone via USB with USB debugging enabled, then:
 
 ```bash
-npx expo start
+npx expo run:android --device
 ```
+
+The app will build and install directly on your phone. After installation USB can be disconnected — the app stays installed permanently.
+
+#### Option B — Release APK
+
+For a fast-opening optimized build:
+
+```bash
+cd android
+.\gradlew.bat assembleRelease
+```
+
+APK will be at:
+
+```
+android/app/build/outputs/apk/release/app-release.apk
+```
+
+Send to your phone via WhatsApp, Google Drive, or email and install it.
 
 ---
 
-## Phone Setup (Expo Go)
+### 3. Network Setup
 
-### Step 1 — Install Expo Go
-
-On your Android phone open the **Google Play Store**, search for **Expo Go** and install it.
-
-### Step 2 — Set up laptop hotspot
-
-Your phone and laptop must be on the same local network. The easiest way is your laptop's hotspot:
+Your phone and laptop must be on the same local network. The easiest way is your laptop's mobile hotspot.
 
 **On Windows:**
 
-1. Open Settings → Network & Internet → Mobile Hotspot
-2. Turn it on
-3. Connect your phone to the hotspot using the shown network name and password
-4. Your laptop IP on the hotspot will be `192.168.137.1`
+1. Settings → Network & Internet → Mobile Hotspot → Turn on
+2. Connect your phone to the hotspot
+3. Your laptop's hotspot IP is `192.168.137.1` by default
 
-> University or corporate WiFi networks isolate devices from each other — always use a personal hotspot instead.
+**In the app:**
 
-### Step 3 — Open the app
+- Open the app → tap ⚙ Settings
+- Enter your server URL (e.g. `http://192.168.137.1:8000`)
+- Tap **Test Connection** to verify
+- Tap **Save Settings**
 
-1. Make sure `npx expo start` is running on your laptop
-2. Open **Expo Go** on your phone
-3. Tap **Scan QR code**
-4. Scan the QR code shown in the terminal or browser
-5. The app will bundle and load on your phone
+The URL is remembered across app restarts.
 
-> If the QR scan doesn't work, in Expo Go tap **Enter URL manually** and type the address shown in the terminal (e.g. `exp://192.168.137.1:8081`)
+> University or corporate WiFi networks isolate devices — always use a personal hotspot.
 
 ---
 
-## Network Setup Summary
+## Network Summary
 
-| Component            | Value                             |
-| -------------------- | --------------------------------- |
-| Laptop hotspot IP    | `192.168.137.1` (Windows default) |
-| Server port          | `8000`                            |
-| Expo dev server port | `8081`                            |
-| SERVER value in app  | `http://192.168.137.1:8000`       |
-
----
-
-## How It Works
-
-```
-Phone camera
-    ↓
-Takes a photo (live: every 1.5s, photo: on demand)
-    ↓
-Sends JPEG to FastAPI server over WiFi
-    ↓
-Server crops center square → resizes to 512×512 → runs U-Net model
-    ↓
-Returns segmentation overlay (base64 JPEG) + class coverage %
-    ↓
-App displays overlay on camera feed + ripeness coverage bars
-```
-
-### Coverage Display
-
-Coverage is shown as **percentage of tomato pixels only** (background excluded):
-
-**RIPENESS**
-
-- Fully ripened = `b_fully_ripened` + `l_fully_ripened`
-- Half ripened = `b_half_ripened` + `l_half_ripened`
-- Green = `b_green` + `l_green`
+| Component          | Value                             |
+| ------------------ | --------------------------------- |
+| Laptop hotspot IP  | `192.168.137.1` (Windows default) |
+| Server port        | `8000`                            |
+| Default server URL | `http://192.168.137.1:8000`       |
 
 ---
 
 ## API Endpoints
 
+### `GET /health`
+
+Returns server status, loaded models, and device info.
+
+```json
+{
+  "status": "ok",
+  "device": "cpu",
+  "models_loaded": ["Step1 — MobileNetV2 (Natural)", "..."],
+  "models_count": 6,
+  "timestamp": 1234567890.0
+}
+```
+
 ### `GET /models`
 
-Returns list of loaded models.
+Returns list of available loaded models.
 
 ```json
 {
   "models": [
     "Step1 — MobileNetV2 (Natural)",
     "Step2 — EfficientNet-B0 (Removed)",
-    "..."
+    "..."]
   ]
 }
 ```
 
-### `POST /segment?model_name=<n>`
+### `POST /segment?model_name=<name>`
 
-Accepts a JPEG image, returns overlay and coverage.
+Accepts a JPEG image, returns overlay, coverage, and confidence scores.
 
 **Request:** `multipart/form-data` with `file` field (JPEG)
 
@@ -241,35 +274,98 @@ Accepts a JPEG image, returns overlay and coverage.
     "l_fully_ripened": 9.7,
     "l_half_ripened": 6.2,
     "l_green": 13.1
-  }
+  },
+  "confidence": {
+    "background": 94.2,
+    "b_fully_ripened": 87.5,
+    "b_half_ripened": 81.3,
+    "b_green": 90.1,
+    "l_fully_ripened": 85.6,
+    "l_half_ripened": 79.8,
+    "l_green": 88.4
+  },
+  "inference_ms": 42.3
+}
+```
+
+### `POST /segment/batch?model_name=<name>`
+
+Accepts up to 10 images at once, returns results for each.
+
+**Request:** `multipart/form-data` with multiple `files` fields
+
+**Response:**
+
+```json
+{
+  "results": [
+    {
+      "filename": "image1.jpg",
+      "overlay_b64": "...",
+      "coverage": { "..." },
+      "confidence": { "..." }
+    }
+  ],
+  "count": 1
 }
 ```
 
 ---
 
+## How It Works
+
+```
+Phone camera / gallery
+        ↓
+Takes photo (live: every 1.5s, photo/upload: on demand)
+        ↓
+Sends JPEG to FastAPI server over WiFi
+        ↓
+Server: crop center square → resize 512×512 → U-Net inference
+        ↓
+Returns overlay (base64 JPEG) + coverage % + confidence % + inference_ms
+        ↓
+App: displays overlay on viewport + ripeness bars + confidence scores
+        ↓
+Scan saved to history (photo/upload mode only)
+```
+
+### Coverage Display
+
+Coverage is shown as **percentage of tomato pixels only** (background excluded):
+
+- **Fully Ripened** = `b_fully_ripened` + `l_fully_ripened`
+- **Half Ripened** = `b_half_ripened` + `l_half_ripened`
+- **Green** = `b_green` + `l_green`
+
+---
+
 ## Performance
 
-| Metric                  | Value        |
-| ----------------------- | ------------ |
-| Inference device        | CPU (laptop) |
-| Average latency         | ~3–8 seconds |
-| Live inference interval | 1.5 seconds  |
-| Model input size        | 512 × 512    |
+| Metric                  | Value          |
+| ----------------------- | -------------- |
+| Inference device        | CPU (laptop)   |
+| Average latency         | ~1.5–5 seconds |
+| Live inference interval | 1.5 seconds    |
+| Model input size        | 512 × 512      |
+| Max batch size          | 10 images      |
 
-> Latency can be reduced by setting `IMG_SIZE = 256` in `server.py` at the cost of some segmentation detail.
+> Latency can be reduced by setting `IMG_SIZE = 256` in `main.py` at the cost of some segmentation detail.
 
 ---
 
 ## Troubleshooting
 
-| Problem                       | Fix                                                                             |
-| ----------------------------- | ------------------------------------------------------------------------------- |
-| "Cannot reach server" on menu | Hotspot is off or server not running — check both                               |
-| App won't load on phone       | Make sure phone is on laptop hotspot, not mobile data                           |
-| QR code scan fails            | In Expo Go tap "Enter URL manually" and type the `exp://` address from terminal |
-| Models not listed             | Check `.pth` files are inside `server/models/` folder                           |
-| Result overlay misaligned     | Server crops center square automatically — this is expected                     |
-| Segmentation looks poor       | Use Step 2 EfficientNet-B0 — best model with mIoU 0.7646                        |
+| Problem                       | Fix                                                                |
+| ----------------------------- | ------------------------------------------------------------------ |
+| "Cannot reach server" on menu | Hotspot is off or server not running — check both                  |
+| Test Connection fails         | Make sure phone is on laptop hotspot, check server URL in Settings |
+| App opens slowly              | Use release APK build instead of debug build                       |
+| Emulator crashes on build     | Connect physical phone via USB and use `--device` flag             |
+| Models not listed             | Check `.pth` files are inside `server/models/` folder              |
+| Export card fails             | Use share sheet option — full gallery save requires release build  |
+| Segmentation looks poor       | Use Step 2 EfficientNet-B0 — best model with mIoU 0.7646           |
+| Result overlay misaligned     | Server crops center square automatically — expected behavior       |
 
 ---
 
@@ -287,8 +383,10 @@ Accepts a JPEG image, returns overlay and coverage.
 
 This app demonstrates the key finding of the thesis: **background bias significantly affects segmentation performance**.
 
-- Step 1 — natural background: mIoU 0.63
-- Step 2 — background removed during training: mIoU 0.76 → **+13% improvement**
-- Step 3 — synthetic background: mIoU 0.75
+| Step   | Training Condition   | Best mIoU  | Change   |
+| ------ | -------------------- | ---------- | -------- |
+| Step 1 | Natural background   | 0.6352     | Baseline |
+| Step 2 | Background removed   | **0.7646** | **+13%** |
+| Step 3 | Synthetic background | 0.7512     | +11.6%   |
 
-Removing background from training images forces the model to learn tomato features rather than farm background cues, leading to substantially better segmentation quality.
+Removing background from training images forces the model to learn tomato features rather than farm background cues, leading to substantially better segmentation quality. Step 3 demonstrates that synthetic backgrounds provide robustness comparable to background removal, suggesting a practical alternative when background removal is not feasible.
