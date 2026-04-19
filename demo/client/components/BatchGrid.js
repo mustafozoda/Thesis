@@ -1,3 +1,9 @@
+// BatchGrid.js - Displays a grid of image results with coverage badges and a detail modal 
+// BUT its not implemented in the main app, just a demo of how it could look with the current data structure. 
+// It assumes each result has an optional `overlay_b64` image and a `coverage` object with tomato ripeness percentages. 
+// The grid shows a badge with the dominant ripeness and total coverage, and tapping a cell opens a modal with more 
+// details and navigation between results.
+
 import React, { useState } from "react";
 import {
   View,
