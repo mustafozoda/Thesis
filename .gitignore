@@ -6,7 +6,6 @@ old-versions-v3/outputs/
 old-versions-v3/step-1-outputs/
 old-versions-v3/step-2-outputs/
 old-versions-v3/step-3-outputs/
-docs/
 tomato-seg-latest-sep/data
 tomato-seg-latest-sep/outputs/
 tomato-seg-latest-sep/config.py

@@ -147,7 +147,7 @@ function SummaryCard({ overlayB64, coverage, confidence, model, latency, inferen
   )
 }
 
-// Dark card styles (always dark for export readability)
+// Dark card styles
 const cs = StyleSheet.create({
   card: {
     width: CARD_W,
@@ -232,7 +232,6 @@ export default function ExportCard({ overlayB64, coverage, confidence, model, la
           ]
         )
       } else {
-        // Fallback to share sheet if permission denied
         await Sharing.shareAsync(uri, {
           mimeType: 'image/jpeg',
           dialogTitle: 'Save or share your scan result',

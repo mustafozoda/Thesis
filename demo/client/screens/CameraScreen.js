@@ -131,7 +131,7 @@ export default function CameraScreen({ route, navigation }) {
       setInferenceMs(data.inference_ms ?? null)
       pulse()
 
-      // Save to history for still mode only (not every live frame)
+      // Save to history for still mode only 
       if (photoMode || uploadMode) {
         addScan({
           overlayB64: data.overlay_b64,

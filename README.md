@@ -42,6 +42,7 @@ on background conditions different from their training condition.
 
 ```text
 THESIS/
+├── demo/                       ← A Thesis Full-Stack demo application
 ├── tomato-seg-latest/          ← MAIN PROJECT (latest version)
 │                                 Full pipeline, all 7 notebooks,
 │                                 trained on Kaggle GPU (Tesla T4)
@@ -50,7 +51,6 @@ THESIS/
 │                                 Same codebase, separated notebooks,
 │                                 run locally for development/testing
 │
-├── docs/                       ← Thesis LaTeX source files
 ├── old-versions/               ← Early prototype (deprecated)
 ├── old-versions-v2/            ← Intermediate version (deprecated)
 ├── old-versions-v3/            ← Intermediate version (deprecated)
